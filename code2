@@ -1,0 +1,51 @@
+#include <stdio.h>
+#define SIZE 16
+
+void suupil(double suup);
+double suupsic(int count);
+
+
+int main(void) {
+
+ int check[SIZE];
+ double suup;
+ int i;
+ int count = 0;
+ 
+ for (i = 0; i < SIZE; i++) {
+  printf("%d번째 강의에 출석하셨나요(출석은 1, 결석은 0): ", i + 1);
+  scanf_s("%d", &check[i]);
+
+  if (check[i] == 0) { count++; }
+
+ }
+
+ suup = suupsic(count);
+ suupil(suup);
+}
+
+ 
+
+ 
+
+ 
+
+ 
+
+double suupsic(int count) {
+
+ double suup = (double)count / SIZE * 100;
+
+ return suup;
+
+}
+
+void suupil(double suup) {
+
+ if (suup >= 30) {
+  printf("수업 일수 부족입니다 (결석률 %lf)", suup);
+ }
+
+ else { printf("출석률 %lf", (double)100 - suup); }
+
+}
