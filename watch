@@ -1,0 +1,131 @@
+#include <tiny2313.h>
+#include <delay.h>
+
+#define SEG_DATA(val) (PORTB = val)
+
+#define SEG_SCAN(val) (PORTD = val)
+
+#define BYTE unsigned char
+
+#define WORD unsigned int
+void disp_seg4(WORD d);
+
+int d0,d1,d2,d3;  
+
+int m_cnt = 0;            /* F F F F 부터 시작 */
+
+int t_cnt = 0;
+
+int d_sec=0;
+
+BYTE seg_hex[] = /* HEX font */
+{0xc0, 0xf9, 0xa4, 0xb0, 0x99, 0x92, 0x82, 0xf8, 0x80, 0x90,0x88,0x83,0xc6,0xa1,0x86,0x8e};
+
+ 
+
+BYTE seg_blank = 0xff;              /*''*/
+
+BYTE seg_bar = 0xbf;                /*'_'*/
+
+BYTE seg_all_on = 0x00;             /*'8.'*/
+
+BYTE seg_t = 0x87;                  /*'t'*/
+
+BYTE seg_scan[4] = {0xf7, 0xef, 0xdf, 0xbf};
+
+BYTE seg_data[4] = {0xbf, 0xbf, 0xbf, 0xbf};
+
+BYTE scan_cnt = 0;
+
+ 
+
+void init_port(void){
+
+     PORTD = 0xff;
+
+     DDRB = 0xff;       /* All output dir , 0=IN, 1=OUT*/
+
+     DDRD = 0xfe;       /*PD6(O) ~ PD2(O), PD1/TXD(O), PD0/RXD(1) = 0xFE*/
+
+     }
+
+void init_timer(void){
+
+     TCCR0 = 4;        /*CK(8MHz)/256 = 31.250kHz : 32usec*/
+
+     TIMSK = 2;        /*TOIE0 = 1*/
+
+     TCNT0 = -32;      /*32usec * 32 = 1.024 msec period*/
+
+     }
+
+interrupt [TIM0_OVF] void TIMER0_OVF0_interrupt (void){
+
+     TCNT0 = -32;      /*32usec * 32 = 1.024 msec period*/
+
+     t_cnt++;
+
+    
+
+     /*7segment*/
+
+     SEG_SCAN(0xff);                   /*SEG OFF*/
+
+     SEG_DATA(seg_data[scan_cnt]);     /*Seg Data out*/
+
+     SEG_SCAN(seg_scan[scan_cnt]);     /*Seg Scan out*/
+
+    
+
+     scan_cnt++;
+
+     if(scan_cnt > 3) scan_cnt = 0;
+
+     }
+               
+     void disp_seg3(WORD d){        d0=(d/10)%10; d1=d%10; seg_data[0] = seg_hex[d0]; seg_data[1] = seg_hex[d1];}
+
+    
+    
+void disp_seg4(WORD d){
+         
+        if(m_cnt>99)
+        {
+        m_cnt=0; d_sec++; disp_seg3(d_sec);
+         if(d_sec>59)d_sec=0;
+        }
+        
+             d2=(d/10)%10;
+             d3=d%10;          
+
+     seg_data[2] = seg_hex[d2];
+
+     seg_data[3] = seg_hex[d3];
+
+     }
+
+void main(void)
+{
+
+     init_port();
+
+     init_timer();
+#asm
+
+    sei
+
+#endasm
+
+     while(1)
+     {
+
+     if(t_cnt>=10)
+     {
+         t_cnt=0;
+         m_cnt++;
+           disp_seg4(m_cnt);
+    
+     }               
+     }
+    
+} 
