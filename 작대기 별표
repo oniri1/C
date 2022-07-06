@@ -1,0 +1,81 @@
+#include <stdio.h>
+
+ 
+
+int main(void)
+
+{
+
+	int number = 0;
+
+	int serostar[10], i = 0;
+
+	while (number != 10) {
+
+		re:
+
+		printf("데이터 입력하시오:");
+
+		int a;
+
+		scanf_s("%d", &a);
+
+		serostar[i] = a;
+
+		if (a > 50) {printf("다시 입력하세요\n");
+
+			goto re;}
+
+		else if(a < 0) {printf("다시 입력하세요\n");
+
+			goto re;}
+
+		else {int x;
+
+			for (x = 1; x <= a; x++) {
+
+				printf("*");
+
+			}
+
+			printf("\n");
+
+			number++;
+
+			i++;}}
+
+ 
+
+	int bb = 0;
+
+	i = 0;
+
+ 
+
+	while (i < 10) {int b, done = 0;
+
+		while (bb != 51) {
+
+			for (b = 1; b <= 10; b++) {
+
+				if ((serostar[i] - bb) <= 0) { printf(" "); }
+
+				else { printf("|"); done = 1; }
+
+				i++;}
+
+		printf("\n");
+
+		bb++;
+
+		i = 0;
+
+		if (done == 0) { goto end; }
+
+		done = 0;}	}
+
+	end:
+
+  return 0;
+
+}
