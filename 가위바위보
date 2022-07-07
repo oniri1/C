@@ -1,0 +1,99 @@
+#include <stdio.h>
+
+#include <stdlib.h>
+
+ 
+
+int main(void)
+
+{
+
+	int player;
+
+	
+
+	printf("가위, 바위, 보 게임에 오신 것을 환영합니다");
+
+	printf("하나를 선택하세요(가위 = 0, 바위 = 1, 보 =2)");
+
+ 
+
+	scanf_s("%d", &player);
+
+ 
+
+	switch (player) {
+
+	case 0:{printf("사용자 = %d (가위)\n", player); break; }
+
+		 
+
+	case 1:{printf("사용자 = %d (바위)\n", player); break; }
+
+ 
+
+	case 2:{printf("사용자 = %d (보)\n", player); break; }
+
+	}
+
+	
+
+ 
+
+	int computer;
+
+ 
+
+	srand(time(NULL));
+
+	computer = rand() % 3;
+
+ 
+
+	printf("컴퓨터 = %d", computer);
+
+ 
+
+	switch (player) {
+
+	case 0: {
+
+		if (computer == 0) { printf(" (가위)\n 비겼습니다."); }
+
+		else if (computer == 1) { printf(" (바위)\n컴퓨터 승리"); }
+
+		else { printf(" (보)\n사용자 승리"); }
+
+		break; }
+
+	case 1: {
+
+		if (computer == 0) { printf(" (가위)\n사용자 승리"); }
+
+		else if (computer == 1) { printf(" (바위)\n비겼습니다"); }
+
+		else { printf(" (보)\n컴퓨터 승리"); }
+
+		break; }
+
+	case 2: {
+
+		if (computer == 0) { printf(" (가위)\n컴퓨터 승리"); }
+
+		else if (computer == 1) { printf(" (바위)\n사용자 승리"); }
+
+		else { printf(" (보)\n비겼습니다"); }
+
+		break; }
+
+	
+
+ 
+
+	}
+
+ 
+
+	return 0;
+
+}
