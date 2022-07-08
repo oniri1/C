@@ -1,0 +1,136 @@
+
+#include <tiny2313.h>
+#include <delay.h>
+#define SEG_DATA(val) (PORTB = val)
+#define SEG_SCAN(val) (PORTD = val)
+#define BYTE unsigned char
+#define WORD unsigned int
+
+void disp_seg1();
+void disp_seg2();
+void disp_seg3();
+void disp_seg4();
+
+int sec_1c,msec;  
+int t_cnt = 0;
+
+
+BYTE seg_mex[] = {0xfc,0xbb,0x9f,0xe7,0x9e,0xa7,0xbc,0xb3,0xc1,0x81,0x9c,0xa3,0xce,0xc7,0xf1,0xf0};
+
+BYTE seg_blank = 0xff;              /*''*/
+BYTE seg_bar = 0xbf;                /*'_'*/
+BYTE seg_all_on = 0x00;             /*'8.'*/
+BYTE seg_t = 0x87;                  /*'t'*/
+BYTE seg_scan[4] = {0xf7, 0xef, 0xdf, 0xbf};
+BYTE seg_data[4] = {0xbf, 0xbf, 0xbf, 0xbf};
+BYTE scan_cnt = 0;
+  
+
+void init_port(void){
+
+     PORTD = 0xff;
+     DDRB = 0xff;       /* All output dir , 0=IN, 1=OUT*/
+     DDRD = 0xfe;       /*PD6(O) ~ PD2(O), PD1/TXD(O), PD0/RXD(1) = 0xFE*/
+     }
+
+void init_timer(void){
+
+     TCCR0 = 4;        /*CK(8MHz)/256 = 31.250kHz : 32usec*/
+     TIMSK = 2;        /*TOIE0 = 1*/
+     TCNT0 = -32;      /*32usec * 32 = 1.024 msec period*/
+     }
+
+interrupt [TIM0_OVF] void TIMER0_OVF0_interrupt (void){
+
+     TCNT0 = -32;      /*32usec * 32 = 1.024 msec period*/
+
+     t_cnt++;
+
+     SEG_SCAN(0xff);                   /*SEG OFF*/
+     SEG_DATA(seg_data[scan_cnt]);     /*Seg Data out*/
+     SEG_SCAN(seg_scan[scan_cnt]);     /*Seg Scan out*/
+    
+     scan_cnt++;
+
+     if(scan_cnt > 3) scan_cnt = 0;
+     }
+         
+    
+void disp_seg1(){
+    
+     seg_data[0] = seg_mex[0];
+     seg_data[1] = seg_mex[1];
+     seg_data[2] = seg_mex[2];
+     seg_data[3] = seg_mex[3];
+    
+ }
+ 
+ void disp_seg2(){
+    
+     seg_data[0] = seg_mex[4];
+     seg_data[1] = seg_mex[5];
+     seg_data[2] = seg_mex[6];
+     seg_data[3] = seg_mex[7];
+    
+     }     
+    
+    
+ void disp_seg3(){
+    
+     seg_data[0] = seg_mex[8];
+     seg_data[1] = seg_mex[9];
+     seg_data[2] = seg_mex[10];
+     seg_data[3] = seg_mex[11];
+    
+     }         
+ 
+            
+void disp_seg4(){
+    
+     seg_data[0] = seg_mex[12];
+     seg_data[1] = seg_mex[13];
+     seg_data[2] = seg_mex[14];
+     seg_data[3] = seg_mex[15];
+    
+     }     
+    
+
+void main(void)
+{
+
+     init_port();
+     init_timer();
+#asm
+
+    sei
+
+#endasm
+
+     while(1)
+     {
+      
+    
+     if(t_cnt>=10){
+     t_cnt=0;
+     msec++;
+      if(msec>99)
+      {
+       msec=0;
+       sec_1c++;
+      
+          }                  
+         }
+    
+      switch(sec_1c % 4)
+      {
+      case 0: disp_seg1(); break;
+      case 1: disp_seg2(); break;
+      case 2: disp_seg3(); break;
+      case 3: disp_seg4(); break;
+
+      default: break;
+      } 
+                   
+     }
+   }
+       
