@@ -18,7 +18,7 @@ GPIO.setup(sound_replay_pin,GPIO.IN,pull_up_down=GPIO.PUD_DOWN)
 
 while 1:
        
-        if GPIO.input(button_pin) == GPIO.HIGH:
+        if GPIO.input(button_pin) == GPIO.HIGH: 
                 print("pushed")  
                 sleep(0.2)
                 camera.capture('/home/project/image/hangul.png')
